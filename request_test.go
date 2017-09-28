@@ -2,6 +2,7 @@ package jsonapi
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -562,7 +563,7 @@ func TestUnmarshalRelationshipsSerializedEmbedded(t *testing.T) {
 
 func TestUnmarshalNestedRelationshipsEmbedded(t *testing.T) {
 	out := bytes.NewBuffer(nil)
-	if err := MarshalOnePayloadEmbedded(out, testModel()); err != nil {
+	if err := MarshalOnePayloadEmbedded(context.Background(), out, testModel()); err != nil {
 		t.Fatal(err)
 	}
 
@@ -1014,14 +1015,14 @@ func samplePayloadWithSideloaded() io.Reader {
 	testModel := testModel()
 
 	out := bytes.NewBuffer(nil)
-	MarshalPayload(out, testModel)
+	MarshalPayload(testCtx, out, testModel)
 
 	return out
 }
 
 func sampleSerializedEmbeddedTestModel() *Blog {
 	out := bytes.NewBuffer(nil)
-	MarshalOnePayloadEmbedded(out, testModel())
+	MarshalOnePayloadEmbedded(context.Background(), out, testModel())
 
 	blog := new(Blog)
 	UnmarshalPayload(out, blog)
@@ -1032,7 +1033,7 @@ func sampleSerializedEmbeddedTestModel() *Blog {
 func sampleModelCustomType() io.Reader {
 	model := sampleModelCustomTypePayload()
 	out := bytes.NewBuffer(nil)
-	err := MarshalPayload(out, model)
+	err := MarshalPayload(context.Background(), out, model)
 	if err != nil {
 		fmt.Printf("Marshalled Custom Type failed: %s\n", err.Error())
 	}
@@ -1064,7 +1065,7 @@ func sampleModelCustomTypePayload() *ModelWithUUIDs {
 func sampleModelCustomTypeWithPtrs() io.Reader {
 	model := sampleModelCustomTypeWithPtrsPayload()
 	out := bytes.NewBuffer(nil)
-	err := MarshalPayload(out, model)
+	err := MarshalPayload(context.Background(), out, model)
 	if err != nil {
 		fmt.Printf("Marshalled Custom Type failed: %s\n", err.Error())
 	}
